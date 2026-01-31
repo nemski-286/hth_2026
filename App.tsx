@@ -152,6 +152,41 @@ const App: React.FC = () => {
     };
   }, []);
 
+  // Real-time Team Sync
+  useEffect(() => {
+    if (!profile?.name) return;
+
+    const teamSubscription = supabase
+      .channel(`team_sync_${profile.name}`)
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'teams',
+        filter: `name=eq.${profile.name}`
+      }, (payload) => {
+        console.log("Sync: Received remote update for team", profile.name);
+        const newData = payload.new as any;
+        setProfile(prev => {
+          if (!prev) return prev;
+          // Only update if data is actually different to avoid unnecessary re-renders
+          return {
+            ...prev,
+            points: newData.points,
+            starsFound: newData.stars_found,
+            solvedIndices: newData.solved_indices,
+            attempts: newData.attempts,
+            tabletDiscovered: newData.tablet_discovered,
+            forgetPasswordClicked: newData.forget_password_clicked
+          };
+        });
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(teamSubscription);
+    };
+  }, [profile?.name]);
+
   const handleLogin = useCallback(async (name: string, pass: string) => {
     const trimmedName = name.trim();
 
