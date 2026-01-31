@@ -5,6 +5,7 @@ import { STARS, SECTION_1_RIDDLES, SECTION_2_RIDDLES, SECTION_3_RIDDLES, INITIAL
 import { StarMap } from './components/StarMap';
 import { RiddlePanel } from './components/RiddlePanel';
 import { AdminDashboard } from './components/AdminDashboard';
+import { AdminLogin } from './components/AdminLogin';
 
 import { supabase } from './lib/supabase';
 
@@ -172,24 +173,13 @@ const App: React.FC = () => {
         forgetPasswordClicked: data.forget_password_clicked
       });
 
-      // Let the useEffect handle redirection for admins
-      if (data.role === 'admin') {
-        setGameState(GameState.ADMIN);
-      } else {
-        setGameState(GameState.MENU);
-      }
+      setGameState(GameState.MENU);
     } else {
       setFeedback({ type: 'error', message: "Access Denied. Check credentials." });
       setTimeout(() => setFeedback(null), 3000);
     }
   }, [navigate]);
 
-  useEffect(() => {
-    if (profile?.role === 'admin' && location.pathname !== '/admin') {
-      console.log("Routing: Admin on non-admin path, redirecting to /admin");
-      navigate('/admin', { replace: true });
-    }
-  }, [profile?.role, navigate, location.pathname]);
 
   const handleRegister = useCallback(async (name: string, pass: string, confirmPass: string) => {
     if (pass !== confirmPass) {
@@ -392,13 +382,8 @@ const App: React.FC = () => {
   ), []);
 
   const renderPlayerView = () => {
-    if (gameState === GameState.LOGIN || gameState === GameState.REGISTER || gameState === GameState.ADMIN) {
+    if (gameState === GameState.LOGIN || gameState === GameState.REGISTER) {
       const isRegister = gameState === GameState.REGISTER;
-      const isAdmin = gameState === GameState.ADMIN;
-
-      if (isAdmin) {
-        return <div className="h-screen w-screen bg-black flex items-center justify-center font-cinzel text-slate-500 text-xs tracking-widest uppercase">Initializing Command Link...</div>;
-      }
 
       return (
         <div className="relative w-screen h-screen overflow-hidden flex items-center justify-center bg-black">
@@ -631,6 +616,7 @@ const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={profile === undefined ? <div className="h-screen w-screen bg-black" /> : renderPlayerView()} />
+      <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={
         profile === undefined ? (
           <div className="h-screen w-screen bg-black" />
@@ -641,14 +627,10 @@ const App: React.FC = () => {
             setGameState(GameState.LOGIN);
             localStorage.removeItem('hth_profile');
             localStorage.removeItem('hth_gameState');
-            navigate('/', { replace: true });
+            navigate('/admin/login', { replace: true });
           }} />
-        ) : profile === null ? (
-          // Allow login on /admin route
-          renderPlayerView()
         ) : (
-          // Player trying to access /admin
-          <Navigate to="/" replace />
+          <Navigate to="/admin/login" replace />
         )
       } />
       <Route path="*" element={<Navigate to="/" replace />} />
