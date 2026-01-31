@@ -157,8 +157,11 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!profile?.name) return;
 
+    // Sanitize team name for channel (alphanumeric only)
+    const channelName = `team_sync_${profile.name.replace(/[^a-z0-9]/gi, '_')}`;
+
     const teamSubscription = supabase
-      .channel(`team_sync_${profile.name}`)
+      .channel(channelName)
       .on('postgres_changes', {
         event: 'UPDATE',
         schema: 'public',
@@ -357,7 +360,6 @@ const App: React.FC = () => {
 
     // 2. Database Logging for ALL sections
     supabase.from('verification_requests').insert([{
-      id: Math.random().toString(36).substr(2, 9),
       team_name: profile.name,
       star_name: riddle.targetStarId,
       submitted_answer: answer,
@@ -367,56 +369,53 @@ const App: React.FC = () => {
       section: currentSection
     }]).then(({ error }) => error && console.error(error));
 
-    setProfile(prev => {
-      if (!prev) return null;
-      const updatedAttempts = currentSection === 3 ? (prev.attempts || {}) : { ...(prev.attempts || {}), [attemptKey]: newAttempts };
+    // Calculate new state locally
+    const updatedAttempts = currentSection === 3 ? (profile.attempts || {}) : { ...(profile.attempts || {}), [attemptKey]: newAttempts };
+    const isNewSolve = isCorrect && !profile.solvedIndices?.includes(globalIndex);
 
-      const isNewSolve = isCorrect && !prev.solvedIndices?.includes(globalIndex);
+    let updatedPoints = profile.points;
+    let newSolvedIndices = [...(profile.solvedIndices || [])];
+    let updatedStarsFound = profile.starsFound;
 
-      let updatedPoints = prev.points;
-      let newSolvedIndices = [...(prev.solvedIndices || [])];
-      let updatedStarsFound = prev.starsFound;
+    if (isNewSolve) {
+      newSolvedIndices.push(globalIndex);
+      updatedPoints += (currentSection === 3 ? 200 : currentSection === 2 ? 150 : 100);
+      updatedStarsFound += 1;
+    }
 
-      if (isNewSolve) {
-        newSolvedIndices.push(globalIndex);
-        updatedPoints += (currentSection === 3 ? 200 : currentSection === 2 ? 150 : 100);
-        updatedStarsFound += 1;
+    const updatedProfile: TeamProfile = {
+      ...profile,
+      attempts: updatedAttempts,
+      solvedIndices: newSolvedIndices,
+      points: updatedPoints,
+      starsFound: updatedStarsFound,
+      tabletDiscovered: profile.tabletDiscovered || (currentSection === 3 && index === 2 && isCorrect)
+    };
 
-        // Handle tablet discovery after S3 Q3 (index 2)
-        if (currentSection === 3 && index === 2) {
-          setTimeout(() => setShowTabletDiscovery(true), 2000);
-        }
+    // 3. Update Local State (Side-effect free)
+    setProfile(updatedProfile);
 
-        // Handle game completion after S3 Q6 (index 5)
-        if (currentSection === 3 && index === 5) {
-          setTimeout(() => setShowCompletionPage(true), 1500);
-        }
+    // 4. Sync to Supabase (Async Side Effect)
+    supabase.from('teams').update({
+      attempts: updatedAttempts,
+      points: updatedPoints,
+      stars_found: updatedStarsFound,
+      solved_indices: newSolvedIndices,
+      tablet_discovered: updatedProfile.tabletDiscovered
+    }).eq('name', profile.name).then(({ error }) => error && console.error("Sync error:", error));
+
+    // 5. Trigger UI Effects
+    if (isNewSolve) {
+      if (currentSection === 3 && index === 2) {
+        setTimeout(() => setShowTabletDiscovery(true), 2000);
       }
-
-      if (currentSection === 1 && newSolvedIndices.filter(i => i < 100).length === 3 && !prev.hasRequestedPointing) {
+      if (currentSection === 3 && index === 5) {
+        setTimeout(() => setShowCompletionPage(true), 1500);
+      }
+      if (currentSection === 1 && newSolvedIndices.filter(i => i < 100).length === 3 && !profile.hasRequestedPointing) {
         setTimeout(() => setShowPointingPrompt(true), 2500);
       }
-
-      const updatedProfile: TeamProfile = {
-        ...prev,
-        attempts: updatedAttempts,
-        solvedIndices: newSolvedIndices,
-        points: updatedPoints,
-        starsFound: updatedStarsFound,
-        tabletDiscovered: prev.tabletDiscovered || (currentSection === 3 && index === 2 && isCorrect)
-      };
-
-      // Sync to Supabase
-      supabase.from('teams').update({
-        attempts: updatedAttempts,
-        points: updatedPoints,
-        stars_found: updatedStarsFound,
-        solved_indices: newSolvedIndices,
-        tablet_discovered: updatedProfile.tabletDiscovered
-      }).eq('name', prev.name).then(({ error }) => error && console.error("Sync error:", error));
-
-      return updatedProfile;
-    });
+    }
 
     if (currentSection >= 2) {
       if (isCorrect) {
