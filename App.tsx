@@ -269,6 +269,18 @@ const App: React.FC = () => {
   };
 
   const selectSection = useCallback((num: number) => {
+    // Permission check
+    const sec1Solved = profile?.solvedIndices?.filter(i => i >= 0 && i < 100).length || 0;
+    const sec2Solved = profile?.solvedIndices?.filter(i => i >= 100 && i < 200).length || 0;
+    const isNaturallyUnlocked = sec1Solved >= SECTION_1_RIDDLES.length && sec2Solved >= SECTION_2_RIDDLES.length;
+    const isUnlocked = num <= 2 || gameConfig.section_3_unlocked || isNaturallyUnlocked;
+
+    if (!isUnlocked) {
+      setFeedback({ type: 'error', message: "This path remains veiled." });
+      setTimeout(() => setFeedback(null), 3000);
+      return;
+    }
+
     if (num > 3) {
       setFeedback({ type: 'error', message: "Horizon Connection Pending." });
       setTimeout(() => setFeedback(null), 3000);
@@ -276,7 +288,7 @@ const App: React.FC = () => {
     }
     setProfile(prev => prev ? ({ ...prev, currentSection: num, solvedIndices: prev.solvedIndices || [], attempts: prev.attempts || {} }) : null);
     setGameState(GameState.START);
-  }, []);
+  }, [profile?.solvedIndices, gameConfig.section_3_unlocked]);
 
   const activeRiddles = useMemo(() => {
     if (profile?.currentSection === 3) return SECTION_3_RIDDLES;
@@ -331,13 +343,23 @@ const App: React.FC = () => {
         setTimeout(() => setShowPointingPrompt(true), 2500);
       }
 
-      return {
+      const updatedProfile = {
         ...prev,
         attempts: updatedAttempts,
         solvedIndices: newSolvedIndices,
         points: updatedPoints,
         starsFound: updatedStarsFound
       };
+
+      // Sync to Supabase
+      supabase.from('teams').update({
+        attempts: updatedAttempts,
+        points: updatedPoints,
+        stars_found: updatedStarsFound,
+        solved_indices: newSolvedIndices
+      }).eq('name', prev.name).then(({ error }) => error && console.error("Sync error:", error));
+
+      return updatedProfile;
     });
 
     if (currentSection >= 2) {
@@ -454,8 +476,11 @@ const App: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 w-full">
                 {[1, 2, 3].map((id) => {
-                  // FORCE ALL UNLOCKED FOR TESTING
-                  const isUnlocked = true;
+                  const sec1Solved = profile?.solvedIndices?.filter(i => i >= 0 && i < 100).length || 0;
+                  const sec2Solved = profile?.solvedIndices?.filter(i => i >= 100 && i < 200).length || 0;
+                  const isNaturallyUnlocked = sec1Solved >= SECTION_1_RIDDLES.length && sec2Solved >= SECTION_2_RIDDLES.length;
+                  const isUnlocked = id <= 2 || gameConfig.section_3_unlocked || isNaturallyUnlocked;
+
                   return (
                     <button key={id} onClick={() => isUnlocked && selectSection(id)} disabled={!isUnlocked} className={`glass-panel-menu p-6 md:p-10 rounded-[3rem] transition-all duration-700 hover:-translate-y-2 group ${isUnlocked ? 'border-white/20' : 'opacity-20 grayscale cursor-not-allowed'}`}>
                       <div className={`text-2xl md:text-4xl mb-4 transition-transform group-hover:rotate-45 duration-700 ${isUnlocked ? 'text-white' : 'text-slate-600'}`}>◈</div>

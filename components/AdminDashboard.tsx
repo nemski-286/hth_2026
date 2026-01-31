@@ -42,8 +42,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       })
       .subscribe();
 
+    // Subscribe to team updates for real-time leaderboard
+    const teamSub = supabase
+      .channel('admin_teams')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'teams' }, () => {
+        fetchTeams();
+      })
+      .subscribe();
+
     return () => {
       supabase.removeChannel(requestSub);
+      supabase.removeChannel(teamSub);
     };
   }, []);
 
@@ -261,17 +270,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             <div className="space-y-5 animate-in fade-in slide-in-from-bottom duration-500">
               <h2 className="text-[12px] font-cinzel tracking-[0.3em] text-indigo-300 uppercase mb-6">System Roster</h2>
               <div className="grid gap-2.5">
-                {teams.filter(t => t.role !== 'admin').map((team, idx) => (
-                  <div key={idx} className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-cinzel text-white tracking-widest uppercase font-bold truncate">{team.name}</p>
+                {teams.filter(t => t.role !== 'admin').map((team, idx) => {
+                  const totalAttempts = Object.values(team.attempts || {}).reduce((sum: any, val: any) => sum + val, 0);
+                  return (
+                    <div key={idx} className="bg-white/[0.02] border border-white/5 p-5 rounded-2xl flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[10px] font-cinzel text-white tracking-widest uppercase font-bold truncate">{team.name}</p>
+                        <p className="text-[7px] text-slate-500 uppercase tracking-widest mt-1">Total Attempts: {totalAttempts}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-indigo-400 font-cinzel text-lg">{team.points} PTS</p>
+                        <p className="text-[7px] text-slate-700 uppercase tracking-widest">Stars: {team.stars_found}</p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-indigo-400 font-cinzel text-lg">{team.points} PTS</p>
-                      <p className="text-[7px] text-slate-700 uppercase tracking-widest">Stars: {team.stars_found}</p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
