@@ -173,7 +173,9 @@ const App: React.FC = () => {
       });
 
       // Let the useEffect handle redirection for admins
-      if (data.role !== 'admin') {
+      if (data.role === 'admin') {
+        setGameState(GameState.ADMIN);
+      } else {
         setGameState(GameState.MENU);
       }
     } else {
@@ -183,8 +185,8 @@ const App: React.FC = () => {
   }, [navigate]);
 
   useEffect(() => {
-    if (profile?.role === 'admin' && location.pathname === '/') {
-      console.log("Routing: Admin on root, redirecting to /admin");
+    if (profile?.role === 'admin' && location.pathname !== '/admin') {
+      console.log("Routing: Admin on non-admin path, redirecting to /admin");
       navigate('/admin', { replace: true });
     }
   }, [profile?.role, navigate, location.pathname]);
@@ -390,8 +392,14 @@ const App: React.FC = () => {
   ), []);
 
   const renderPlayerView = () => {
-    if (gameState === GameState.LOGIN || gameState === GameState.REGISTER) {
+    if (gameState === GameState.LOGIN || gameState === GameState.REGISTER || gameState === GameState.ADMIN) {
       const isRegister = gameState === GameState.REGISTER;
+      const isAdmin = gameState === GameState.ADMIN;
+
+      if (isAdmin) {
+        return <div className="h-screen w-screen bg-black flex items-center justify-center font-cinzel text-slate-500 text-xs tracking-widest uppercase">Initializing Command Link...</div>;
+      }
+
       return (
         <div className="relative w-screen h-screen overflow-hidden flex items-center justify-center bg-black">
           {loginBackground}
