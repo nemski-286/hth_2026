@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hunting the Heavens</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&family=EB+Garamond:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                font-size: 13.6px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1440px) {
+            :root {
+                font-size: 15px;
+            }
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #020617;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            /* Strict non-selection */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            /* Disable long-press menu on iOS */
+        }
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+
+        .font-garamond {
+            font-family: 'EB Garamond', serif;
+        }
+
+        @keyframes twinkle {
+
+            0%,
+            100% {
+                opacity: 0.1;
+                transform: scale(0.9);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        .twinkle {
+            animation: twinkle var(--duration, 4s) ease-in-out infinite;
+            animation-delay: var(--delay, 0s);
+            will-change: transform, opacity;
+        }
+
+        @keyframes celestial-drift {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1.05);
+            }
+
+            25% {
+                transform: translate(1%, 1%) scale(1.07);
+            }
+
+            50% {
+                transform: translate(-0.5%, 1.5%) scale(1.05);
+            }
+
+            75% {
+                transform: translate(-1.5%, -0.5%) scale(1.08);
+            }
+        }
+
+        .animate-celestial-drift {
+            animation: celestial-drift 60s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-panel-menu {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-panel-menu:active {
+            background: rgba(99, 102, 241, 0.15);
+            box-shadow: 0 0 50px rgba(99, 102, 241, 0.4);
+            border-color: rgba(165, 180, 252, 0.4);
+            transform: scale(0.96);
+        }
+
+        .carousel-container {
+            perspective: 1200px;
+        }
+
+        .carousel-card {
+            transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                opacity 1.2s cubic-bezier(0.2, 0.8, 0.2, 1),
+                filter 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+            will-change: transform, opacity, filter;
+        }
+
+        .carousel-card.inactive {
+            filter: blur(8px) brightness(0.2);
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .carousel-card.prev {
+            transform: translateX(-65%) rotateY(20deg) scale(0.85);
+            z-index: 10;
+            opacity: 0.1;
+        }
+
+        .carousel-card.active {
+            transform: translateX(0) rotateY(0) scale(1);
+            z-index: 30;
+            filter: none;
+            opacity: 1;
+        }
+
+        .carousel-card.next {
+            transform: translateX(65%) rotateY(-20deg) scale(0.85);
+            z-index: 10;
+            opacity: 0.1;
+        }
+
+        .ethereal-grain::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 1000;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Visible styled scrollbar */
+        .visible-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(99, 102, 241, 0.4) transparent;
+        }
+
+        .visible-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            display: block;
+        }
+
+        .visible-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .visible-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(99, 102, 241, 0.4);
+            border-radius: 20px;
+            border: 1px solid transparent;
+        }
+
+        .visible-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(99, 102, 241, 0.6);
+        }
+
+        /* Hide scrollbars but allow scrolling */
+        .custom-scrollbar {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            display: none;
+            /* Hide scrollbar for Chrome, Safari and Opera */
+        }
+
+        .pdf-bg {
+            background: linear-gradient(to bottom, #0a1128 0%, #1e2a4a 50%, #8b4513 90%, #d2691e 100%);
+            background-size: cover;
+            position: absolute;
+            inset: -5%;
+            overflow: hidden;
+            will-change: transform;
+        }
+
+        .img-fade-in {
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .tracking-wide-custom {
+            letter-spacing: 0.15em;
+        }
+
+        .tracking-wider-custom {
+            letter-spacing: 0.25em;
+        }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.38.0"
+  }
+}
+</script>
+    <link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="ethereal-grain">
+
+    <div id="root"></div>
+
+    <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

@@ -1,0 +1,208 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+dist/
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+ ../../.antigravity/
+        ../../.arduinoIDE/
+        ../../.gemini/
+        ../../.gitconfig
+        ../../.ipython/
+        ../../.lesshst
+        ../../.matplotlib/
+        ../../.python_history
+        ../../.vscode-R/
+        ../../.vscode/
+        ../../AppData/
+        ../../Contacts/
+        ../../CrossDevice/
+        ../1.jpg
+        ../111106158.zip
+        ../2.jpg
+        ../20240326111435946846.docx
+        ../2025-2026-1-24181-admitCard.pdf
+        ../204_PS1-3.pdf
+        ../204_PS2.pdf
+        ../21.txt
+        ../22.txt
+        ../24181_2024-2025-1.pdf
+        ../24181_2024-2025-2 (1).pdf
+        ../24181_2024-2025-2.pdf
+        ../24181_2025-2026_1_FeeReceipt.pdf
+        ../24181_2025-2026_2_FeeReceipt.pdf
+        ../APznzab6tDwBJpa0eAph22dMrHDQyjmVgqom_sYXNW1wNvwy-XNrYr3HRuiSpuMZdGo8SCanO5pDnDHE7jTAL-z-AIksRaS9L1ZMhnb5x9zdjTNPz8J_CL5Q9EL3F3XbKHi8seX63R8mHGFeXM3DiaM1mtHXaXb3dgW-2rzzfKZOfBjct1jq8l_0eGYSggzgP7DgWfF (1).pdf
+        ../APznzab6tDwBJpa0eAph22dMrHDQyjmVgqom_sYXNW1wNvwy-XNrYr3HRuiSpuMZdGo8SCanO5pDnDHE7jTAL-z-AIksRaS9L1ZMhnb5x9zdjTNPz8J_CL5Q9EL3F3XbKHi8seX63R8mHGFeXM3DiaM1mtHXaXb3dgW-2rzzfKZOfBjct1jq8l_0eGYSggzgP7DgWfF.pdf
+        ../ASTROPICTIONARY.pdf
+        ../ASTROPICTIONARY.zip
+        ../ASTROPICTIONARY/
+        ../Academic Leave.jpg
+        ../Academic Leave.pdf
+        ../Adobe Express - file.png
+        ../Antigravity.exe
+        ../AntiraggingAffidavitForm.pdf
+        ../App Downloads/
+        ../Applications of AI.pptx
+        ../Assignment 2 Q2.dwg
+        ../Assignment 2 Question 1.dwg
+        ../Assignment 2 Question 1.dwl
+        ../Assignment 2 Question 1.dwl2
+        ../Assignment 2 Question 1_recover.dwg
+        ../Assignment 2 Question 2.dwg
+        ../Assignment 2 Question 3.dwg
+        ../Assignment 3 Q1.dwg
+        ../Assignment 3 Q2.dwg
+        ../Assignment 3 Q3.dwg
+        ../Assignment 4 Q1.dwg
+        ../Assignment 4 Q2.bak
+        ../Assignment 4 Q2.dwg
+        ../Assignment 4 Q3.bak
+        ../Assignment 4 Q3.dwg
+        ../Assignment1_PHY101.pdf
+        ../Complex Analysis (Springer Undergraduate Mathematics Series) -- John M. Howie -- ( WeLib.org ).epub
+        ../Complex Analysis (Springer Undergraduate Mathematics Series) -- John M. Howie -- ( WeLib.org ).pdf
+        ../DUN5742071 (1).pdf
+        ../DUN5742071 (2).pdf
+        ../DUN5742071.pdf
+        ../Data Extraction & Analysis Task.csv
+        ../Drawing1.dwg
+        ../Drawing5.dwg
+        ../Echte Liebe.dwg
+        ../FORM_ECS_AA02.docx
+        ../FortiClientMiniSetup-Windows-x64-Enterprise-7.4.1.exe
+        ../FortiClientVPNOnlineInstaller.exe
+        ../HYD-CCU-07112025.pdf
+        ../Homework1.pdf
+        ../How AI Will Impact the Future.pptx
+        ../IBAC101 Session 1.jpg
+        ../IBAC101 Session 1.png
+        ../IISERB ID Card.pdf
+        ../IMG-20250925-WA0036.jpg
+        ../IMG-20250925-WA0037.jpg
+        ../IMG-20250925-WA0038.jpg
+        ../IMG-20250925-WA0039.jpg
+        ../IMG-20250925-WA0040.jpg
+        ../IMG-20250925-WA0041.jpg
+        ../IMG-20250925-WA0042.jpg
+        ../IRC_Shakespeare_in_the_Bush1-2-1.pdf
+        ../Koustav.pdf
+        ../LT1057.asc
+        ../Lec-10.pdf
+        ../Lec-6 (1).pdf
+        ../Lec-6.pdf
+        ../Lec_9.pdf
+        ../Lecture 7&8.pdf
+        ../Lecture28_RemSen_1.pdf
+        ../Lenovo ADP Claim Form.pdf
+        ../Lenovo_ADP_Claim_Form.pdf
+        ../MSTeams Support Logs 2025 12 24 08 12 32.1144551/
+        ../MTH-102-end-sem-Nov-2023.pdf
+        ../MidSem-solution-key.pdf
+        ../NemskiDigBick_150493091.pdf
+        ../Offer_Letter_Koustav_Signed.pdf
+        ../Old PC Downloads/
+        ../PHY106 Assignment 2.pdf
+        ../PHY106 Assignment 3.pdf
+        ../PHY106 Assignment 5.pdf
+        ../PHY106 Assignment 8.pdf
+        ../PRIDE PROFILES.png
+        ../Problems-1.pptx
+        ../Project 1 Koustav Patra 24181.dwg
+        ../Project 3 Koustav Patra 24181.bak
+        ../Project 3 Koustav Patra 24181.dwg
+        ../R-4.5.1-win.exe
+        ../RStudio-2025.09.0-387.exe
+        ../Racism in South America.pdf
+        ../Registration24181.pdf
+        ../Registration_24181 (1).pdf
+        ../Registration_24181 (2).pdf
+        ../Registration_24181.pdf
+        ../Registration_24181_ECO102.pdf
+        ../Relation Proof.jpg
+        ../Research & Content Writing Task.docx
+        ../SECTION-1_20260128_003658_0000.pdf
+        ../ScreenRecording_05-05-2025_09-57-02_1.mov
+        ../Screenshot 2025-07-20 194941.png
+        ../Screenshot_2026-01-31-09-03-14-28_e2d5b3f32b79de1d45acd1fad96fbb0f.jpg.jpeg
+        ../Screenshot_2026-01-31-09-04-32-82_e2d5b3f32b79de1d45acd1fad96fbb0f.jpg.jpeg
+        ../Screenshot_2026-01-31-09-04-43-95_e2d5b3f32b79de1d45acd1fad96fbb0f.jpg.jpeg
+        ../Screenshot_2026-01-31-09-04-51-89_e2d5b3f32b79de1d45acd1fad96fbb0f.jpg.jpeg
+        ../Screenshot_2026-01-31-09-04-58-83_e2d5b3f32b79de1d45acd1fad96fbb0f.jpg.jpeg
+        ../Screenshot_2026-01-31-09-05-09-13_e2d5b3f32b79de1d45acd1fad96fbb0f.jpg.jpeg
+        ../Semester Fee 2024-25 I.pdf
+        ../Telegram Desktop/
+        ../Texturelabs_Sky_170L.jpg
+        ../Texturelabs_Sky_170S.jpg
+        ../Unconfirmed 632050.crdownload
+        ../WOW.docx
+        ../Week - 3_Slides-20250529T115331Z-1-001.zip
+        ../WhatsApp Image 2026-01-31 at 16.11.23 (1).jpeg
+        ../WhatsApp Image 2026-01-31 at 16.11.23.jpeg
+        ../WhatsApp Image 2026-01-31 at 16.11.24.jpeg
+        ../WhatsApp Image 2026-01-31 at 16.14.38.jpeg
+        ../WhatsApp Video 2026-01-28 at 23.32.10.mp4
+        ../WhatsApp Video 2026-01-28 at 23.32.42.mp4
+        ../Zoom_cm_fo42anktZ9vvrZo4_mO4InMPcdhvzpulvsFijFm9+KScVdjB61M9G5@pPRM6DKJNSBaFK3t_kba31cef1867c81ab_.exe
+        ../arduino-ide_2.3.4_Windows_64bit.exe
+        ../assignment 2_Q2.dwg
+        ../basics ez.bak
+        ../basics pt2.dwg
+        ../bs_es_structure.pdf
+        ../desktop.ini
+        ../dokumen.pub_a-foundation-course-in-mathematics-1783323582-9781783323586.pdf
+        ../e9ca238b-4cbb-4bfd-9292-64beb487042e.pdf
+        ../final-slides-1769624209046.pdf
+        ../final-slides-1769624550883.pdf
+        ../good-hth-copy.zip
+        ../hth-until-29-night-updates (1).zip
+        ../hth-until-29-night-updates.zip
+        ../hunting-the-heavens-2026/
+        ../hunting-the-heavens.zip
+        ../ltc2879x-ltspice.asc
+        ../magnIn.docx
+        ../mingw-get-setup.exe
+        ../mousefix-master.zip
+        ../mousefix-master/
+        ../node-v25.5.0-x64.msi
+        ../nonogram.png
+        ../paint.net.5.1.1.install.anycpu.web.zip
+        ../photo_2024-11-14_16-47-24.jpg
+        ../python-manager-25.2.msix
+        ../scoreCard-73723995-24181 (1).pdf
+        ../scoreCard-73723995-24181.pdf
+        ../wwe-world-wrestling-entertainment.gif
+        ../../Favorites/
+        ../../HelloWorld.py
+        ../../Links/
+        ../../Music/
+        ../../NTUSER.DAT
+        ../../NTUSER.DAT{2ad838bc-efea-11ee-a54d-000d3a94eaa1}.TM.blf
+        ../../NTUSER.DAT{2ad838bc-efea-11ee-a54d-000d3a94eaa1}.TMContainer00000000000000000001.regtrans-ms
+        ../../NTUSER.DAT{2ad838bc-efea-11ee-a54d-000d3a94eaa1}.TMContainer00000000000000000002.regtrans-ms
+        ../../OneDrive/
+        ../../Saved Games/
+        ../../Searches/
+        ../../Videos/
+        ../../codecrafters-http-server-python/
+        ../../ntuser.dat.LOG1
+        ../../ntuser.dat.LOG2
+        ../../ntuser.ini
