@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { TeamProfile } from '../types';
 
-export const AdminLogin: React.FC = () => {
+interface AdminLoginProps {
+    onLoginSuccess: (profile: TeamProfile) => void;
+}
+
+export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
     const navigate = useNavigate();
     const [password, setPassword] = useState('');
     const [feedback, setFeedback] = useState<{ type: 'error' | 'success', message: string } | null>(null);
@@ -37,6 +41,7 @@ export const AdminLogin: React.FC = () => {
                 };
 
                 localStorage.setItem('hth_profile', JSON.stringify(profile));
+                onLoginSuccess(profile);
                 setFeedback({ type: 'success', message: "Command Link Established. Accessing Terminal..." });
 
                 setTimeout(() => {
