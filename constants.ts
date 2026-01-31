@@ -171,7 +171,7 @@ export const SECTION_3_RIDDLES: Riddle[] = [
     acceptedAnswers: ["Isaac Newton", "Sir Isaac Newton"],
     isCustom: true,
     imageUrls: [
-      "https://i.ibb.co/v6gyqBF5/Whats-App-Image-2026-01-31-at-16-11-23-1.jpg",
+      "https://i.ibb.co/GQTyVjfy/Whats-App-Image-2026-01-31-at-16-11-23.jpg",
       "https://i.ibb.co/hF868Xwd/Whats-App-Image-2026-01-31-at-16-11-24.jpg"
     ]
   }

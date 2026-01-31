@@ -44,6 +44,7 @@ const App: React.FC = () => {
   const [forgotPasswordWarning, setForgotPasswordWarning] = useState(false);
   const [showGuidelines, setShowGuidelines] = useState(false);
   const [showTabletDiscovery, setShowTabletDiscovery] = useState(false);
+  const [showCompletionPage, setShowCompletionPage] = useState(false);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -379,6 +380,11 @@ const App: React.FC = () => {
         if (currentSection === 3 && index === 2) {
           setTimeout(() => setShowTabletDiscovery(true), 2000);
         }
+
+        // Handle game completion after S3 Q6 (index 5)
+        if (currentSection === 3 && index === 5) {
+          setTimeout(() => setShowCompletionPage(true), 1500);
+        }
       }
 
       if (currentSection === 1 && newSolvedIndices.filter(i => i < 100).length === 3 && !prev.hasRequestedPointing) {
@@ -448,7 +454,7 @@ const App: React.FC = () => {
   ), []);
 
   const handleDownloadTablet = useCallback(async () => {
-    const imageUrl = "https://i.ibb.co/v6gyqBF5/Whats-App-Image-2026-01-31-at-16-11-23-1.jpg";
+    const imageUrl = "https://i.ibb.co/GQTyVjfy/Whats-App-Image-2026-01-31-at-16-11-23.jpg";
     try {
       const response = await fetch(imageUrl);
       const blob = await response.blob();
@@ -706,7 +712,7 @@ const App: React.FC = () => {
             <div className="relative z-10 glass-panel w-[92%] max-w-2xl p-8 md:p-14 rounded-[4.5rem] text-center border-white/20 animate-in zoom-in slide-in-from-bottom-12 duration-1000">
               <h2 className="text-[10px] font-cinzel tracking-[0.4em] text-indigo-400 mb-6 uppercase font-bold">New Artifact Uncovered</h2>
               <div className="w-full h-48 md:h-80 rounded-3xl overflow-hidden border border-white/10 mb-8 bg-black/40">
-                <img src="https://i.ibb.co/v6gyqBF5/Whats-App-Image-2026-01-31-at-16-11-23-1.jpg" alt="Discovered Tablet" className="w-full h-full object-contain" />
+                <img src="https://i.ibb.co/GQTyVjfy/Whats-App-Image-2026-01-31-at-16-11-23.jpg" alt="Discovered Tablet" className="w-full h-full object-contain" />
               </div>
               <p className="text-xl md:text-3xl font-garamond text-indigo-100 mb-10 italic">"A random tablet has been discovered."</p>
               <div className="flex flex-col md:flex-row gap-4 justify-center">
@@ -722,6 +728,52 @@ const App: React.FC = () => {
                 >
                   Continue Exploration
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showCompletionPage && (
+          <div className="fixed inset-0 z-[300] bg-black flex items-center justify-center p-6 animate-in fade-in duration-[2000ms]">
+            {/* Background Atmosphere */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[120px] animate-pulse" />
+              <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-emerald-500/5 rounded-full blur-[100px] animate-pulse delay-700" />
+            </div>
+
+            <div className="relative z-10 glass-panel w-full max-w-2xl p-10 md:p-20 rounded-[5rem] text-center border-indigo-500/20 shadow-[0_0_100px_rgba(99,102,241,0.1)] animate-in zoom-in slide-in-from-bottom-20 duration-[1500ms]">
+              <div className="inline-block px-4 py-1.5 rounded-full border border-indigo-500/30 bg-indigo-500/10 mb-10">
+                <h2 className="text-[11px] font-cinzel tracking-[0.5em] text-indigo-300 uppercase font-bold">Voyage Complete</h2>
+              </div>
+
+              <div className="space-y-8 mb-16">
+                <p className="text-xl md:text-2xl font-garamond text-slate-100 leading-relaxed italic">
+                  "The physicist finds his peace within on a new planet starting new beginning. The lone voyager suffices his goal filing his desire and fulfilling his sole."
+                </p>
+
+                <div className="w-24 h-px bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent mx-auto" />
+
+                <p className="text-2xl md:text-4xl font-cinzel text-indigo-500 tracking-wider">
+                  Congratulations
+                </p>
+                <p className="text-sm font-cinzel text-slate-400 tracking-[0.2em] uppercase">
+                  On completing Hunting the Heavens 2026
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center gap-6">
+                <a
+                  href="https://chat.whatsapp.com/Hl9lHdMK2BbJNtanXMkgCO"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative inline-flex items-center gap-3 px-10 py-5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 rounded-3xl font-cinzel text-xs tracking-[0.3em] uppercase transition-all border border-emerald-500/30 hover:scale-105 active:scale-95 shadow-2xl"
+                >
+                  <svg className="w-5 h-5 fill-emerald-400" viewBox="0 0 24 24">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.412c-1.935 0-3.83-.518-5.494-1.498L3.02 21l.635-3.522c-1.085-1.666-1.658-3.613-1.658-5.61 0-5.86 4.764-10.627 10.63-10.627 2.844 0 5.518 1.107 7.527 3.117s3.114 4.683 3.114 7.51c0 5.862-4.764 10.628-10.627 10.628" />
+                  </svg>
+                  Join the Archives
+                </a>
+                <span className="text-[10px] font-cinzel text-slate-500 tracking-widest uppercase opacity-60">Success Unlocked</span>
               </div>
             </div>
           </div>

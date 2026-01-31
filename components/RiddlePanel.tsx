@@ -292,7 +292,7 @@ export const RiddlePanel: React.FC<RiddlePanelProps> = memo(({
             </button>
 
             <img
-              src="https://i.ibb.co/v6gyqBF5/Whats-App-Image-2026-01-31-at-16-11-23-1.jpg"
+              src="https://i.ibb.co/GQTyVjfy/Whats-App-Image-2026-01-31-at-16-11-23.jpg"
               alt="Ancient Tablet"
               className="w-full h-full object-contain p-8"
             />
