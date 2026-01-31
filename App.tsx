@@ -343,28 +343,34 @@ const App: React.FC = () => {
     if (currentSection !== 3 && currentAttempts >= 2) return;
 
     const riddle = activeRiddles[index];
+    const globalIndex = index + (currentSection - 1) * 100;
+
+    // 1. Prevent Redundant Solves
+    if (profile.solvedIndices?.includes(globalIndex)) {
+      setFeedback({ type: 'success', message: "This star is already aligned." });
+      setTimeout(() => setFeedback(null), 2000);
+      return;
+    }
+
     const isCorrect = riddle.acceptedAnswers?.some(ans => answer.trim().toLowerCase() === ans.toLowerCase());
     const newAttempts = currentAttempts + 1;
 
-    if (currentSection === 1) {
-      supabase.from('verification_requests').insert([{
-        id: Math.random().toString(36).substr(2, 9),
-        team_name: profile.name,
-        star_name: riddle.targetStarId,
-        submitted_answer: answer,
-        timestamp: new Date().toISOString(),
-        status: 'pending',
-        type: 'submission',
-        section: 1
-      }]).then(({ error }) => error && console.error(error));
-    }
+    // 2. Database Logging for ALL sections
+    supabase.from('verification_requests').insert([{
+      id: Math.random().toString(36).substr(2, 9),
+      team_name: profile.name,
+      star_name: riddle.targetStarId,
+      submitted_answer: answer,
+      timestamp: new Date().toISOString(),
+      status: currentSection === 1 ? 'pending' : (isCorrect ? 'auto-verified' : 'rejected'),
+      type: 'submission',
+      section: currentSection
+    }]).then(({ error }) => error && console.error(error));
 
     setProfile(prev => {
       if (!prev) return null;
       const updatedAttempts = currentSection === 3 ? (prev.attempts || {}) : { ...(prev.attempts || {}), [attemptKey]: newAttempts };
 
-      // Use offset indices to prevent clashes between sections
-      const globalIndex = index + (currentSection - 1) * 100;
       const isNewSolve = isCorrect && !prev.solvedIndices?.includes(globalIndex);
 
       let updatedPoints = prev.points;
