@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { VerificationRequest, GameConfig } from '../types';
 import { supabase } from '../lib/supabase';
+import { SECTION_1_RIDDLES } from '../constants';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -64,29 +65,46 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     await supabase.from('verification_requests').update({ status: action }).eq('id', requestId);
 
     if (action === 'approve') {
-      const team = teams.find(t => t.name === req.teamName);
-      if (team) {
-        let updatedPoints = team.points;
-        let updatedStars = team.stars_found;
-        let updatedSolved = team.solved_indices || [];
+      // 1. Fetch LATEST team data to avoid race conditions (overwrite prevention)
+      const { data: latestTeam, error: fetchError } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('name', req.teamName)
+        .single();
+
+      if (latestTeam && !fetchError) {
+        let updatedPoints = latestTeam.points;
+        let updatedStars = latestTeam.stars_found;
+        let updatedSolved = [...(latestTeam.solved_indices || [])];
 
         if (req.type === 'pointing') {
           updatedPoints += 200;
         } else if (req.type === 'submission') {
-          updatedPoints += (req.section === 3 ? 200 : req.section === 2 ? 150 : 100);
-          updatedStars += 1;
-          // Note: index for solved_indices might need to be passed in request table too if needed
+          // Resolve index for Section 1
+          if (req.section === 1) {
+            const riddleIndex = SECTION_1_RIDDLES.findIndex(r => r.targetStarId === req.starName);
+            if (riddleIndex !== -1 && !updatedSolved.includes(riddleIndex)) {
+              updatedSolved.push(riddleIndex);
+              updatedPoints += 100;
+              updatedStars += 1;
+            }
+          } else {
+            // Section 2/3 are usually auto-verified, but we handle them here just in case
+            updatedPoints += (req.section === 3 ? 200 : req.section === 2 ? 150 : 100);
+            updatedStars += 1;
+          }
         }
 
+        // 2. Push Atomic Update
         await supabase.from('teams').update({
           points: updatedPoints,
           stars_found: updatedStars,
           solved_indices: updatedSolved
         }).eq('name', req.teamName);
 
-        // Refresh teams
-        const { data } = await supabase.from('teams').select('*').order('points', { ascending: false });
-        if (data) setTeams(data);
+        // Refresh teams list
+        const { data: allTeams } = await supabase.from('teams').select('*').order('points', { ascending: false });
+        if (allTeams) setTeams(allTeams);
       }
     }
 

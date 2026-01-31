@@ -373,15 +373,9 @@ const App: React.FC = () => {
     const updatedAttempts = currentSection === 3 ? (profile.attempts || {}) : { ...(profile.attempts || {}), [attemptKey]: newAttempts };
     const isNewSolve = isCorrect && !profile.solvedIndices?.includes(globalIndex);
 
-    let updatedPoints = profile.points;
-    let newSolvedIndices = [...(profile.solvedIndices || [])];
-    let updatedStarsFound = profile.starsFound;
-
-    if (isNewSolve) {
-      newSolvedIndices.push(globalIndex);
-      updatedPoints += (currentSection === 3 ? 200 : currentSection === 2 ? 150 : 100);
-      updatedStarsFound += 1;
-    }
+    const updatedPoints = currentSection === 1 ? profile.points : (isNewSolve ? profile.points + (currentSection === 3 ? 200 : 150) : profile.points);
+    const newSolvedIndices = (currentSection !== 1 && isNewSolve) ? [...profile.solvedIndices, globalIndex] : profile.solvedIndices;
+    const updatedStarsFound = (currentSection !== 1 && isNewSolve) ? profile.starsFound + 1 : profile.starsFound;
 
     const updatedProfile: TeamProfile = {
       ...profile,
@@ -392,28 +386,35 @@ const App: React.FC = () => {
       tabletDiscovered: profile.tabletDiscovered || (currentSection === 3 && index === 2 && isCorrect)
     };
 
-    // 3. Update Local State (Side-effect free)
+    // 3. Update Local State
     setProfile(updatedProfile);
 
-    // 4. Sync to Supabase (Async Side Effect)
-    supabase.from('teams').update({
-      attempts: updatedAttempts,
-      points: updatedPoints,
-      stars_found: updatedStarsFound,
-      solved_indices: newSolvedIndices,
-      tablet_discovered: updatedProfile.tabletDiscovered
-    }).eq('name', profile.name).then(({ error }) => error && console.error("Sync error:", error));
+    // 4. Sync to Supabase
+    if (currentSection !== 1) {
+      supabase.from('teams').update({
+        attempts: updatedAttempts,
+        points: updatedPoints,
+        stars_found: updatedStarsFound,
+        solved_indices: newSolvedIndices,
+        tablet_discovered: updatedProfile.tabletDiscovered
+      }).eq('name', profile.name).then(({ error }) => error && console.error("Sync error:", error));
+    } else {
+      // For Section 1, only sync attempts
+      supabase.from('teams').update({
+        attempts: updatedAttempts
+      }).eq('name', profile.name).then(({ error }) => error && console.error("Sync error:", error));
+    }
 
     // 5. Trigger UI Effects
-    if (isNewSolve) {
+    if (currentSection === 1) {
+      setFeedback({ type: 'success', message: "Verification Signal Dispatched" });
+      setTimeout(() => setFeedback(null), 3000);
+    } else if (isNewSolve) {
       if (currentSection === 3 && index === 2) {
         setTimeout(() => setShowTabletDiscovery(true), 2000);
       }
       if (currentSection === 3 && index === 5) {
         setTimeout(() => setShowCompletionPage(true), 1500);
-      }
-      if (currentSection === 1 && newSolvedIndices.filter(i => i < 100).length === 3 && !profile.hasRequestedPointing) {
-        setTimeout(() => setShowPointingPrompt(true), 2500);
       }
     }
 
