@@ -12,6 +12,8 @@ interface RiddlePanelProps {
   solvedIndices?: number[];
   attempts?: Record<string, number>;
   currentSection?: number;
+  tabletDiscovered?: boolean;
+  onDownloadTablet?: () => void;
 }
 
 export const RiddlePanel: React.FC<RiddlePanelProps> = memo(({
@@ -20,9 +22,12 @@ export const RiddlePanel: React.FC<RiddlePanelProps> = memo(({
   solvedIndices = [],
   attempts = {},
   currentSection = 1,
-  isSectionOne = false
+  isSectionOne = false,
+  tabletDiscovered = false,
+  onDownloadTablet
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [tabletOpen, setTabletOpen] = useState(false);
   const [answer, setAnswer] = useState('');
   const [zoomedImage, setZoomedImage] = useState<string | null>(null);
   const touchStart = useRef<number | null>(null);
@@ -208,6 +213,29 @@ export const RiddlePanel: React.FC<RiddlePanelProps> = memo(({
                   </div>
                 )}
               </div>
+
+              {/* Tablet Access Button */}
+              {currentSection === 3 && activeIndex >= 3 && tabletDiscovered && (
+                <button
+                  onClick={() => setTabletOpen(true)}
+                  className="absolute -right-4 top-1/2 -translate-y-1/2 translate-x-full hidden md:flex flex-col items-center gap-2 group animate-in slide-in-from-right duration-700"
+                >
+                  <div className="w-12 h-12 bg-indigo-500/20 hover:bg-indigo-500/40 border border-indigo-500/30 rounded-full flex items-center justify-center transition-all group-hover:scale-110 shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                    <svg className="w-6 h-6 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M12 4v16m8-8H4" strokeWidth={2} strokeLinecap="round" /></svg>
+                  </div>
+                  <span className="text-[7px] font-cinzel text-indigo-300 tracking-[0.3em] uppercase font-bold opacity-0 group-hover:opacity-100 transition-opacity">Access Tablet</span>
+                </button>
+              )}
+
+              {/* Mobile Tablet Access Button */}
+              {currentSection === 3 && activeIndex >= 3 && tabletDiscovered && (
+                <button
+                  onClick={() => setTabletOpen(true)}
+                  className="fixed bottom-24 right-6 md:hidden z-[60] w-12 h-12 bg-indigo-600/60 border border-white/20 rounded-full flex items-center justify-center shadow-2xl animate-in zoom-in duration-500"
+                >
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" strokeWidth={2} /></svg>
+                </button>
+              )}
             </div>
           );
         })}
@@ -236,6 +264,7 @@ export const RiddlePanel: React.FC<RiddlePanelProps> = memo(({
         })}
       </div>
 
+
       {zoomedImage && (
         <div
           className="fixed inset-0 z-[200] bg-black/98 backdrop-blur-3xl flex items-center justify-center p-4 md:p-12 animate-in fade-in zoom-in duration-300 pointer-events-auto cursor-zoom-out"
@@ -248,6 +277,35 @@ export const RiddlePanel: React.FC<RiddlePanelProps> = memo(({
           >
             <svg className="w-6 h-6 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" strokeWidth={2} /></svg>
           </button>
+        </div>
+      )}
+
+      {tabletOpen && (
+        <div className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-2xl flex items-center justify-center p-6 animate-in fade-in duration-500 pointer-events-auto">
+          <div className="relative w-full max-w-2xl aspect-square md:aspect-video glass-panel rounded-[3rem] overflow-hidden border-white/10 shadow-2xl animate-in zoom-in duration-500">
+            {/* Close Button Top Left */}
+            <button
+              onClick={() => setTabletOpen(false)}
+              className="absolute top-8 left-8 z-10 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 flex items-center justify-center border border-white/10 transition-all active:scale-95"
+            >
+              <svg className="w-5 h-5 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M6 18L18 6M6 6l12 12" strokeWidth={2.5} /></svg>
+            </button>
+
+            <img
+              src="https://i.ibb.co/v6gyqBF5/Whats-App-Image-2026-01-31-at-16-11-23-1.jpg"
+              alt="Ancient Tablet"
+              className="w-full h-full object-contain p-8"
+            />
+
+            <div className="absolute bottom-8 left-0 right-0 flex justify-center">
+              <button
+                onClick={onDownloadTablet}
+                className="px-8 py-3 bg-indigo-600/40 hover:bg-indigo-500/60 text-white rounded-xl font-cinzel text-[9px] tracking-[0.3em] uppercase transition-all shadow-xl font-bold border border-indigo-500/30 active:scale-95"
+              >
+                Download Data
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

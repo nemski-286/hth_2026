@@ -59,6 +59,7 @@ export interface TeamProfile {
   attempts?: Record<string, number>; // key: "section-index"
   hasRequestedPointing?: boolean;
   forgetPasswordClicked?: boolean;
+  tabletDiscovered?: boolean;
 }
 
 export interface GameConfig {

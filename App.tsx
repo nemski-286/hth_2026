@@ -43,6 +43,7 @@ const App: React.FC = () => {
   const [gameConfig, setGameConfig] = useState<GameConfig>({ sections_1_2_unlocked: false, section_3_unlocked: false });
   const [forgotPasswordWarning, setForgotPasswordWarning] = useState(false);
   const [showGuidelines, setShowGuidelines] = useState(false);
+  const [showTabletDiscovery, setShowTabletDiscovery] = useState(false);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -170,7 +171,8 @@ const App: React.FC = () => {
         role: data.role,
         solvedIndices: data.solved_indices,
         attempts: data.attempts,
-        forgetPasswordClicked: data.forget_password_clicked
+        forgetPasswordClicked: data.forget_password_clicked,
+        tabletDiscovered: data.tablet_discovered
       });
 
       setGameState(GameState.MENU);
@@ -337,18 +339,24 @@ const App: React.FC = () => {
         newSolvedIndices.push(globalIndex);
         updatedPoints += (currentSection === 3 ? 200 : currentSection === 2 ? 150 : 100);
         updatedStarsFound += 1;
+
+        // Handle tablet discovery after S3 Q3 (index 2)
+        if (currentSection === 3 && index === 2) {
+          setTimeout(() => setShowTabletDiscovery(true), 2000);
+        }
       }
 
       if (currentSection === 1 && newSolvedIndices.filter(i => i < 100).length === 3 && !prev.hasRequestedPointing) {
         setTimeout(() => setShowPointingPrompt(true), 2500);
       }
 
-      const updatedProfile = {
+      const updatedProfile: TeamProfile = {
         ...prev,
         attempts: updatedAttempts,
         solvedIndices: newSolvedIndices,
         points: updatedPoints,
-        starsFound: updatedStarsFound
+        starsFound: updatedStarsFound,
+        tabletDiscovered: prev.tabletDiscovered || (currentSection === 3 && index === 2 && isCorrect)
       };
 
       // Sync to Supabase
@@ -356,7 +364,8 @@ const App: React.FC = () => {
         attempts: updatedAttempts,
         points: updatedPoints,
         stars_found: updatedStarsFound,
-        solved_indices: newSolvedIndices
+        solved_indices: newSolvedIndices,
+        tablet_discovered: updatedProfile.tabletDiscovered
       }).eq('name', prev.name).then(({ error }) => error && console.error("Sync error:", error));
 
       return updatedProfile;
@@ -402,6 +411,26 @@ const App: React.FC = () => {
       <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"></div>
     </div>
   ), []);
+
+  const handleDownloadTablet = useCallback(async () => {
+    const imageUrl = "https://i.ibb.co/v6gyqBF5/Whats-App-Image-2026-01-31-at-16-11-23-1.jpg";
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = "discovered_tablet.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+      // Fallback to direct link if fetch fails
+      window.open(imageUrl, '_blank');
+    }
+  }, []);
 
   const renderPlayerView = () => {
     if (gameState === GameState.LOGIN || gameState === GameState.REGISTER) {
@@ -587,6 +616,8 @@ const App: React.FC = () => {
             onSignalAdmin={() => { }}
             isSectionOne={profile?.currentSection === 1}
             onSolveSubmit={handleSolveSubmit}
+            tabletDiscovered={!!profile?.tabletDiscovered}
+            onDownloadTablet={handleDownloadTablet}
             solvedIndices={profile?.solvedIndices?.filter(i => {
               const sec = profile.currentSection || 1;
               return i >= (sec - 1) * 100 && i < sec * 100;
@@ -632,6 +663,32 @@ const App: React.FC = () => {
         {feedback && (
           <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] px-8 py-2.5 rounded-full glass-panel animate-in slide-in-from-bottom duration-500 shadow-2xl ${feedback.type === 'error' ? 'border-rose-500/30 text-rose-200' : 'border-emerald-500/30 text-emerald-200'}`}>
             <p className="font-cinzel text-[10px] tracking-wider-custom uppercase font-bold">{feedback.message}</p>
+          </div>
+        )}
+
+        {showTabletDiscovery && (
+          <div className="fixed inset-0 z-[200] bg-black flex items-center justify-center p-6 animate-in fade-in duration-1000">
+            <div className="relative z-10 glass-panel w-[92%] max-w-2xl p-8 md:p-14 rounded-[4.5rem] text-center border-white/20 animate-in zoom-in slide-in-from-bottom-12 duration-1000">
+              <h2 className="text-[10px] font-cinzel tracking-[0.4em] text-indigo-400 mb-6 uppercase font-bold">New Artifact Uncovered</h2>
+              <div className="w-full h-48 md:h-80 rounded-3xl overflow-hidden border border-white/10 mb-8 bg-black/40">
+                <img src="https://i.ibb.co/v6gyqBF5/Whats-App-Image-2026-01-31-at-16-11-23-1.jpg" alt="Discovered Tablet" className="w-full h-full object-contain" />
+              </div>
+              <p className="text-xl md:text-3xl font-garamond text-indigo-100 mb-10 italic">"A random tablet has been discovered."</p>
+              <div className="flex flex-col md:flex-row gap-4 justify-center">
+                <button
+                  onClick={handleDownloadTablet}
+                  className="px-10 py-4 bg-indigo-600/40 hover:bg-indigo-500/60 text-white rounded-2xl font-cinzel text-[11px] tracking-widest uppercase transition-all shadow-xl font-bold border border-indigo-500/30"
+                >
+                  Add to Inventory
+                </button>
+                <button
+                  onClick={() => setShowTabletDiscovery(false)}
+                  className="px-10 py-4 bg-white/5 hover:bg-white/10 text-slate-300 rounded-2xl font-cinzel text-[11px] tracking-widest uppercase transition-all font-bold border border-white/10"
+                >
+                  Continue Exploration
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
