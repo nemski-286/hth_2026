@@ -171,7 +171,21 @@ export const RiddlePanel: React.FC<RiddlePanelProps> = memo(({
 
                 {idx === activeIndex && (
                   <div className="space-y-4 animate-in fade-in duration-500">
-                    {showInputUI ? (
+                    {solvedIndices.includes(idx) ? (
+                      <div className="flex flex-col items-center gap-4 py-6 animate-in zoom-in duration-700">
+                        <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                          <svg className="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-[11px] font-cinzel text-emerald-400 tracking-[0.4em] uppercase font-bold">Successfully Aligned</p>
+                          {currentSection === 3 && idx < 5 && (
+                            <p className="text-[9px] font-garamond text-slate-500 mt-2 italic">Seek the next star in the series.</p>
+                          )}
+                        </div>
+                      </div>
+                    ) : showInputUI ? (
                       <div className="space-y-3 max-w-xs mx-auto">
                         <input
                           type="text"
