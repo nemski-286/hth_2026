@@ -641,7 +641,7 @@ const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={profile === undefined ? <div className="h-screen w-screen bg-black" /> : renderPlayerView()} />
-      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/login" element={<AdminLogin onLoginSuccess={(p) => setProfile(p)} />} />
       <Route path="/admin" element={
         profile === undefined ? (
           <div className="h-screen w-screen bg-black" />
